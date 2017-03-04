@@ -41,13 +41,13 @@ class post_keyvalue (APIView):
                 value = parsed_data[k]
 
             # get collection
-            keyvalueCollection = database().getCollection('keyvalue')
+            keyvalueCollection = database().getCollection("keyvalue")
 
             # insert key : value into database
             # pending auto generation of timestamp (epoch based)
             timeOfInsert = datetime.utcnow()
 
-            keyvalueCollection.insert_one({ 'key' : key, 'value' : value, 'timestamp' : int(timeOfInsert.strftime('%s')) })
+            keyvalueCollection.insert_one({ "key" : key, "value" : value, "timestamp" : int(timeOfInsert.strftime('%s')) })
 
             # return Response
             return Response("Time: " + str(timeOfInsert.strftime('%I:%M %p')), status=status.HTTP_200_OK)
@@ -77,7 +77,7 @@ class get_keyvalue (APIView):
         try:
         
             # Optional parameter: timestamp
-            timestamp = request.GET.get('timestamp')
+            timestamp = request.GET.get("timestamp")
 
             # Get collection
             keyvalueCollection = database().getCollection("keyvalue")
@@ -93,7 +93,7 @@ class get_keyvalue (APIView):
             keyvalue = keyvalueCollection.find(query).sort([("timestamp",-1)])
 
             # return response of keyvalue index 0 with HTTP 200 OK status
-            return Response({ "value" : keyvalue[0]['value'] }, status=status.HTTP_200_OK)
+            return Response({ "value" : keyvalue[0]["value"] }, status=status.HTTP_200_OK)
 
         except:
             
