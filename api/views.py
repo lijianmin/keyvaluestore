@@ -45,10 +45,12 @@ class post_keyvalue (APIView):
 
             # insert key : value into database
             # pending auto generation of timestamp (epoch based)
-            keyvalueCollection.insert_one({ 'key' : key, 'value' : value, 'timestamp' : int(datetime.utcnow().strftime('%s')) })
+            timeOfInsert = datetime.utcnow()
+
+            keyvalueCollection.insert_one({ 'key' : key, 'value' : value, 'timestamp' : int(timeOfInsert.strftime('%s')) })
 
             # return Response
-            return Response(status=status.HTTP_200_OK)
+            return Response("Time: " + str(timeOfInsert.strftime('%I:%M %p')), status=status.HTTP_200_OK)
             
         except:
             
@@ -62,31 +64,34 @@ class post_keyvalue (APIView):
         
 class get_keyvalue (APIView):
        
-    def get(self, request, key):
+    def get(self, request, key, format=None):
         
         """
             By key and (optional) timestamp
             
             Either 1) /object/<key>
             or     2) /object/<key>?timestamp=<timestamp>
-        """
+        """ 
         
         try:
-            # optional parameter named timestamp
-            #timestamp = int(request.data['timestamp'])
+            # Optional parameter named timestamp
+            timestamp = int(request.GET.get('timestamp'))
 
-            # get collection
-            keyvalueCollection = database().getCollection('keyvalue')
+            # Get collection
+            keyvalueCollection = database().getCollection("keyvalue")
 
-            # form query
-            query = { "key" : key }
-            
-            # get value based on key (return the one with the latest timestamp)
-            # descending order of timestamp - we want the latest .sort({ "timestamp":-1 })[0]
-            keyvalue = keyvalueCollection.find_one(query)
+            # Form query
+            if timestamp == 0:
+                query = { "key" : key }
+            else:
+                query = { "key" : key, "timestamp" : timestamp }
+   
+            # get value based on key
+            # then sort in descending order of timestamp to get the record with the latest timestamp
+            keyvalue = keyvalueCollection.find(query).sort([("timestamp",-1)])
 
-            # return response w/ HTTP 200
-            return Response(keyvalue['value'], status=status.HTTP_200_OK)
+            # return response of keyvalue index 0 with HTTP 200 OK status
+            return Response(keyvalue[0]['value'], status=status.HTTP_200_OK)
 
         except:
             
