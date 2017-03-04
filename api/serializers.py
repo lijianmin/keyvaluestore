@@ -9,4 +9,4 @@ class KeyValueSerializer(serializers.Serializer):
     value = serializers.CharField(required=True, min_length=1, max_length=None)
     
     # timestamp in UTC (epoch timestamp e.g. 1440568980 which is 6.03PM August 15 2015)
-    timestamp = serializers.DateTimeField(required=True, format="%s", read_only=True)
+    timestamp = serializers.DateTimeField(required=True, format="%s")

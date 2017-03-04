@@ -18,7 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls), # Django Admin
-    url(r'^', include('api.urls')), # Books Management
+    url(r'^', include('api.urls')), 
 ]
 
 

@@ -27,6 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# MongoDB 
+MONGO_DATABASE = 'keyvaluestore'
+MONGO_HOST = 'localhost'
+MONGO_USER = ''
+MONGO_USER_PASSWORD = ''
+MONGO_PORT = 27017
 
 # Application definition
 
@@ -37,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'api',
 ]
 
 MIDDLEWARE = [
