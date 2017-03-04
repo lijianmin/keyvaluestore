@@ -9,7 +9,7 @@ from rest_framework import status
 
 from keyvaluestore.database import *
 
-import json
+from datetime import *
 
 # Create your views here.
 class post_keyvalue (APIView):
@@ -35,7 +35,7 @@ class post_keyvalue (APIView):
             # load json from payload 
             parsed_data = request.data
 
-            # process the loaded json
+            # process the loaded json - well, since the json has unpredictable field names :)
             for k in parsed_data:
                 key = k
                 value = parsed_data[k]
@@ -45,7 +45,7 @@ class post_keyvalue (APIView):
 
             # insert key : value into database
             # pending auto generation of timestamp (epoch based)
-            keyvalueCollection.insert_one({ 'key' : key, 'value' : value })
+            keyvalueCollection.insert_one({ 'key' : key, 'value' : value, 'timestamp' : int(datetime.utcnow().strftime('%s')) })
 
             # return Response
             return Response(status=status.HTTP_200_OK)
