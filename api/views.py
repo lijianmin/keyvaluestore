@@ -56,10 +56,8 @@ class post_keyvalue (APIView):
             
             # nothing found HTTP 404
             return Response({
-                        "error" : {
-                                "status" : status.HTTP_500_INTERNAL_SERVER_ERROR,
-                                "message" : "ERROR"
-                        }
+                        "status" : status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        "message" : "Error encountered while processing data"
                     }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class get_keyvalue (APIView):
@@ -71,34 +69,36 @@ class get_keyvalue (APIView):
             
             Either 1) /object/<key>
             or     2) /object/<key>?timestamp=<timestamp>
+
+            If timestamp is not specified, latest entry matching the key will be returned
+            Else return entry matching both key and timestamp
         """ 
-        
+
         try:
-            # Optional parameter named timestamp
-            timestamp = int(request.GET.get('timestamp'))
+        
+            # Optional parameter: timestamp
+            timestamp = request.GET.get('timestamp')
 
             # Get collection
             keyvalueCollection = database().getCollection("keyvalue")
 
             # Form query
-            if timestamp == 0:
+            if timestamp is None:
                 query = { "key" : key }
             else:
-                query = { "key" : key, "timestamp" : timestamp }
+                query = { "key" : key, "timestamp" : int(timestamp) }
    
             # get value based on key
             # then sort in descending order of timestamp to get the record with the latest timestamp
             keyvalue = keyvalueCollection.find(query).sort([("timestamp",-1)])
 
             # return response of keyvalue index 0 with HTTP 200 OK status
-            return Response(keyvalue[0]['value'], status=status.HTTP_200_OK)
+            return Response({ "value" : keyvalue[0]['value'] }, status=status.HTTP_200_OK)
 
         except:
             
             # nothing found HTTP 404
             return Response({
-                        "error" : {
-                                "status" : status.HTTP_404_NOT_FOUND,
-                                "message" : "Result not found"
-                        }
+                        "status" : status.HTTP_404_NOT_FOUND,
+                        "message" : "Result not found"
                     }, status=status.HTTP_404_NOT_FOUND)
