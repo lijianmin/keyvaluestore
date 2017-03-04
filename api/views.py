@@ -62,7 +62,7 @@ class post_keyvalue (APIView):
         
 class get_keyvalue (APIView):
        
-    def get(self, request, format=None):
+    def get(self, request, key):
         
         """
             By key and (optional) timestamp
@@ -70,20 +70,20 @@ class get_keyvalue (APIView):
             Either 1) /object/<key>
             or     2) /object/<key>?timestamp=<timestamp>
         """
-
+        
         try:
             # optional parameter named timestamp
-            timestamp = int(request.data['timestamp'])
+            #timestamp = int(request.data['timestamp'])
 
             # get collection
             keyvalueCollection = database().getCollection('keyvalue')
 
             # form query
-            query = { "key" : request.GET['key'] }
+            query = { "key" : key }
             
             # get value based on key (return the one with the latest timestamp)
-            # descending order of timestamp - we want the latest
-            keyvalue = keyvalueCollection.find(query).sort({ "timestamp":-1 })[0]
+            # descending order of timestamp - we want the latest .sort({ "timestamp":-1 })[0]
+            keyvalue = keyvalueCollection.find_one(query)
 
             # return response w/ HTTP 200
             return Response(keyvalue['value'], status=status.HTTP_200_OK)
