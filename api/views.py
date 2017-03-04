@@ -19,6 +19,8 @@ class post_keyvalue (APIView):
         {
             "key" : "value",
         }
+
+        - Todo: Handle edge cases
     """
     
     def post(self, request, format=None):
@@ -50,7 +52,9 @@ class post_keyvalue (APIView):
             keyvalueCollection.insert_one({ "key" : key, "value" : value, "timestamp" : int(timeOfInsert.strftime('%s')) })
 
             # return Response
-            return Response("Time: " + str(timeOfInsert.strftime('%I:%M %p')), status=status.HTTP_200_OK)
+            return Response({ 
+                        "time" : str(timeOfInsert.strftime('%I:%M %p'))
+                    }, status=status.HTTP_200_OK)
             
         except:
             
