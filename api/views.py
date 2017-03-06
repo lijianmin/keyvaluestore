@@ -11,16 +11,16 @@ from keyvaluestore.database import *
 
 from datetime import *
 
+import json
+
 # Create your views here.
 class post_keyvalue (APIView):
     
     """
-        Accepts JSON
-        {
-            "key" : "value",
-        }
-
-        - Todo: Handle edge cases
+    Accepts JSON
+    {
+        "key" : "value",
+    }
     """
     
     def post(self, request, format=None):
@@ -55,29 +55,29 @@ class post_keyvalue (APIView):
             return Response({ 
                         "time" : str(timeOfInsert.strftime('%I:%M %p'))
                     }, status=status.HTTP_200_OK)
-            
+
         except:
             
             # nothing found HTTP 404
             return Response({
                         "status" : status.HTTP_500_INTERNAL_SERVER_ERROR,
                         "message" : "Error encountered while processing data"
-                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+
 class get_keyvalue (APIView):
        
+    """
+    By key and (optional) timestamp
+            
+    Either 1) /object/<key>
+    or     2) /object/<key>?timestamp=<timestamp>
+
+    If timestamp is not specified, latest entry matching the key will be returned
+    Else return entry matching both key and timestamp
+    """ 
+
     def get(self, request, key, format=None):
         
-        """
-            By key and (optional) timestamp
-            
-            Either 1) /object/<key>
-            or     2) /object/<key>?timestamp=<timestamp>
-
-            If timestamp is not specified, latest entry matching the key will be returned
-            Else return entry matching both key and timestamp
-        """ 
-
         try:
         
             # Optional parameter: timestamp
